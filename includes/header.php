@@ -42,8 +42,8 @@ function isActive($page, $active_page) {
     <div class="top-bar d-none d-lg-block">
         <div class="container d-flex justify-content-between align-items-center py-2">
             <div class="top-info text-white-50">
-                <span class="me-3"><i class="fa-solid fa-phone text-accent me-1"></i> +91 98765 43210</span>
-                <span><i class="fa-solid fa-envelope text-accent me-1"></i> info@donamart.com</span>
+                <span class="me-3"><i class="fa-solid fa-phone text-accent me-1"></i> +91 8874812003</span>
+                <span><i class="fa-solid fa-envelope text-accent me-1"></i> vaibhawrajput05@gmail.com</span>
             </div>
             <div class="top-socials">
                 <a href="#" class="text-white-50 me-3"><i class="fa-brands fa-facebook-f"></i></a>

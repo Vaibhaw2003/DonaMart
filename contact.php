@@ -31,7 +31,7 @@ require_once 'includes/header.php';
                             </div>
                             <div>
                                 <h5 class="font-weight-bold mb-1">Factory & Corporate Address</h5>
-                                <p class="text-muted text-sm mb-0">Industrial Estate, Sector 5, Plot 42, Jaipur, Rajasthan - 302006, India</p>
+                                <p class="text-muted text-sm mb-0">maruti nagar colony, lanka, varanasi- 221005</p>
                             </div>
                         </div>
 
@@ -41,7 +41,7 @@ require_once 'includes/header.php';
                             </div>
                             <div>
                                 <h5 class="font-weight-bold mb-1">Phone & Mobile Numbers</h5>
-                                <p class="text-muted text-sm mb-0">Sales: +91 98765 43210<br>Customer Support: +91 98765 43211</p>
+                                <p class="text-muted text-sm mb-0">Sales: +91 8874812003<br>Customer Support: +91 9984020040</p>
                             </div>
                         </div>
 
@@ -51,7 +51,7 @@ require_once 'includes/header.php';
                             </div>
                             <div>
                                 <h5 class="font-weight-bold mb-1">Email Addresses</h5>
-                                <p class="text-muted text-sm mb-0">General Enquiries: info@donamart.com<br>Exports: sales@donamart.com</p>
+                                <p class="text-muted text-sm mb-0">General Enquiries: vaibhawrajput05@gmail.com<br>Exports: sales@donamart.com</p>
                             </div>
                         </div>
                     </div>

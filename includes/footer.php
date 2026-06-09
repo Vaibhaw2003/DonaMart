@@ -46,15 +46,15 @@
                     <ul class="list-unstyled text-white-50 footer-contact">
                         <li class="mb-3 d-flex align-items-start">
                             <i class="fa-solid fa-location-dot text-accent me-2 mt-1"></i>
-                            <span>Industrial Estate, Sector 5, Plot 42, Jaipur, Rajasthan - 302006</span>
+                            <span>maruti nagar colony, lanka, varanasi- 221005</span>
                         </li>
                         <li class="mb-3 d-flex align-items-center">
                             <i class="fa-solid fa-phone text-accent me-2"></i>
-                            <span>+91 98765 43210</span>
+                            <span>+91 8874812003</span>
                         </li>
                         <li class="mb-3 d-flex align-items-center">
                             <i class="fa-solid fa-envelope text-accent me-2"></i>
-                            <span>info@donamart.com</span>
+                            <span>vaibhawrajput05@gmail.com</span>
                         </li>
                     </ul>
                 </div>

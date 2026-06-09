@@ -394,7 +394,7 @@ try {
                     <div class="testimonial-user">
                         <img src="/DonaMart/uploads/g1.png" alt="Client Avatar" class="testimonial-avatar">
                         <div>
-                            <h5 class="mb-0 font-weight-bold text-primary-dark">Rajesh Kumar</h5>
+                            <h5 class="mb-0 font-weight-bold text-primary-dark">Vaibhaw Singh</h5>
                             <small class="text-muted">Operations Director, Green Catering Corp</small>
                         </div>
                     </div>
@@ -409,7 +409,7 @@ try {
                     <div class="testimonial-user">
                         <img src="/DonaMart/uploads/g2.png" alt="Client Avatar" class="testimonial-avatar">
                         <div>
-                            <h5 class="mb-0 font-weight-bold text-primary-dark">Meera Sharma</h5>
+                            <h5 class="mb-0 font-weight-bold text-primary-dark">Satyam Singh</h5>
                             <small class="text-muted">Procurement Head, Organic Grocers Ltd</small>
                         </div>
                     </div>
@@ -419,13 +419,13 @@ try {
             <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
                 <div class="testimonial-card">
                     <p class="text-muted italic">
-                        "Outstanding quality and flawless delivery. We exported two containers of compartment plates and bowls to the UK, and they passed all EU biodegradable checks easily."
+                        "We are committed to delivering high-quality, eco-friendly compartment plates and bowls manufactured with a focus on durability, sustainability, and customer satisfaction."
                     </p>
                     <div class="testimonial-user">
                         <img src="/DonaMart/uploads/g3.png" alt="Client Avatar" class="testimonial-avatar">
                         <div>
-                            <h5 class="mb-0 font-weight-bold text-primary-dark">David Smith</h5>
-                            <small class="text-muted">Importer, EcoTableware UK Ltd</small>
+                            <h5 class="mb-0 font-weight-bold text-primary-dark">Satyam Singh</h5>
+                            <small class="text-muted">Procurement Head, Organic Grocers Ltd</small>
                         </div>
                     </div>
                 </div>
