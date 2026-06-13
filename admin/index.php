@@ -4,160 +4,149 @@ $admin_page = 'dashboard';
 require_once __DIR__ . '/../config/db.php';
 require_once __DIR__ . '/includes/header.php';
 
-// Fetch statistics
 try {
     $prod_count = $pdo->query("SELECT COUNT(*) FROM products")->fetchColumn();
     $cat_count  = $pdo->query("SELECT COUNT(*) FROM categories")->fetchColumn();
     $enq_count  = $pdo->query("SELECT COUNT(*) FROM bulk_enquiries")->fetchColumn();
     $msg_count  = $pdo->query("SELECT COUNT(*) FROM contact_messages")->fetchColumn();
     $sub_count  = $pdo->query("SELECT COUNT(*) FROM newsletter_subscribers")->fetchColumn();
-    
-    // Fetch 5 recent bulk enquiries
-    $stmt_enq = $pdo->query("SELECT * FROM bulk_enquiries ORDER BY id DESC LIMIT 5");
-    $recent_enquiries = $stmt_enq->fetchAll();
+    $pending_enq= $pdo->query("SELECT COUNT(*) FROM bulk_enquiries WHERE status='pending'")->fetchColumn();
+    $unread_msg = $pdo->query("SELECT COUNT(*) FROM contact_messages WHERE status='unread'")->fetchColumn();
 
-    // Fetch 5 recent contact messages
-    $stmt_msg = $pdo->query("SELECT * FROM contact_messages ORDER BY id DESC LIMIT 5");
-    $recent_messages = $stmt_msg->fetchAll();
+    $recent_enquiries = $pdo->query("SELECT * FROM bulk_enquiries ORDER BY id DESC LIMIT 5")->fetchAll();
+    $recent_messages  = $pdo->query("SELECT * FROM contact_messages ORDER BY id DESC LIMIT 5")->fetchAll();
 } catch (PDOException $e) {
-    $prod_count = $cat_count = $enq_count = $msg_count = $sub_count = 0;
+    $prod_count = $cat_count = $enq_count = $msg_count = $sub_count = $pending_enq = $unread_msg = 0;
     $recent_enquiries = $recent_messages = [];
 }
 ?>
 
-<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h1 class="h2 font-weight-bold">Dashboard</h1>
-    <div class="btn-toolbar mb-2 mb-md-0">
-        <span class="text-muted">Welcome back, <?php echo htmlspecialchars($_SESSION['admin_username']); ?>!</span>
-    </div>
+<div class="page-header-row">
+    <div class="page-header-title">Dashboard</div>
+    <span style="font-size:12px;color:#999;">
+        <?= date('l, d F Y') ?>
+    </span>
 </div>
 
-<!-- Statistics Cards -->
-<div class="row g-4 mb-5">
-    <!-- Products -->
-    <div class="col-12 col-sm-6 col-xl-3">
-        <div class="card card-stat bg-white p-3 d-flex flex-row align-items-center justify-content-between">
-            <div>
-                <span class="text-muted text-sm text-uppercase font-weight-bold">Products</span>
-                <h3 class="mb-0 font-weight-bold mt-1"><?php echo $prod_count; ?></h3>
-            </div>
-            <div class="bg-success bg-opacity-10 text-success p-3 rounded-circle">
-                <i class="fa-solid fa-boxes-stacked fs-3"></i>
-            </div>
+<!-- Stat Cards -->
+<div class="row g-3 mb-4">
+    <div class="col-6 col-xl-3">
+        <div class="stat-card">
+            <div class="stat-icon-wrap si-green"><i class="fa-solid fa-boxes-stacked"></i></div>
+            <div class="stat-label">Products</div>
+            <div class="stat-value"><?= $prod_count ?></div>
+            <div class="stat-sub">across <?= $cat_count ?> categories</div>
         </div>
     </div>
-    <!-- Categories -->
-    <div class="col-12 col-sm-6 col-xl-3">
-        <div class="card card-stat bg-white p-3 d-flex flex-row align-items-center justify-content-between">
-            <div>
-                <span class="text-muted text-sm text-uppercase font-weight-bold">Categories</span>
-                <h3 class="mb-0 font-weight-bold mt-1"><?php echo $cat_count; ?></h3>
-            </div>
-            <div class="bg-info bg-opacity-10 text-info p-3 rounded-circle">
-                <i class="fa-solid fa-tags fs-3"></i>
-            </div>
+    <div class="col-6 col-xl-3">
+        <div class="stat-card">
+            <div class="stat-icon-wrap si-amber"><i class="fa-solid fa-file-invoice-dollar"></i></div>
+            <div class="stat-label">Bulk Enquiries</div>
+            <div class="stat-value"><?= $enq_count ?></div>
+            <div class="stat-sub"><?= $pending_enq ?> pending reply</div>
         </div>
     </div>
-    <!-- Bulk Enquiries -->
-    <div class="col-12 col-sm-6 col-xl-3">
-        <div class="card card-stat bg-white p-3 d-flex flex-row align-items-center justify-content-between">
-            <div>
-                <span class="text-muted text-sm text-uppercase font-weight-bold">Bulk Enquiries</span>
-                <h3 class="mb-0 font-weight-bold mt-1"><?php echo $enq_count; ?></h3>
-            </div>
-            <div class="bg-warning bg-opacity-10 text-warning p-3 rounded-circle">
-                <i class="fa-solid fa-file-invoice-dollar fs-3"></i>
-            </div>
+    <div class="col-6 col-xl-3">
+        <div class="stat-card">
+            <div class="stat-icon-wrap si-teal"><i class="fa-solid fa-envelope"></i></div>
+            <div class="stat-label">Messages</div>
+            <div class="stat-value"><?= $msg_count ?></div>
+            <div class="stat-sub"><?= $unread_msg ?> unread</div>
         </div>
     </div>
-    <!-- Newsletter Subscribers -->
-    <div class="col-12 col-sm-6 col-xl-3">
-        <div class="card card-stat bg-white p-3 d-flex flex-row align-items-center justify-content-between">
-            <div>
-                <span class="text-muted text-sm text-uppercase font-weight-bold">Subscribers</span>
-                <h3 class="mb-0 font-weight-bold mt-1"><?php echo $sub_count; ?></h3>
-            </div>
-            <div class="bg-danger bg-opacity-10 text-danger p-3 rounded-circle">
-                <i class="fa-solid fa-users fs-3"></i>
-            </div>
+    <div class="col-6 col-xl-3">
+        <div class="stat-card">
+            <div class="stat-icon-wrap si-red"><i class="fa-solid fa-users"></i></div>
+            <div class="stat-label">Subscribers</div>
+            <div class="stat-value"><?= $sub_count ?></div>
+            <div class="stat-sub">newsletter list</div>
         </div>
     </div>
 </div>
 
-<div class="row g-4">
+<!-- Recent Tables -->
+<div class="row g-3">
     <!-- Recent Bulk Enquiries -->
-    <div class="col-lg-6">
-        <div class="card border-0 rounded-4 shadow-sm p-4 bg-white">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h4 class="h5 mb-0 font-weight-bold"><i class="fa-solid fa-envelope-open-text me-2 text-warning"></i>Recent Bulk Enquiries</h4>
-                <a href="/DonaMart/admin/enquiries.php" class="btn btn-outline-secondary btn-sm rounded-pill font-weight-bold text-xs">View All</a>
+    <div class="col-lg-7">
+        <div class="dm-card">
+            <div style="padding:14px 18px;border-bottom:1px solid #f0f0f0;display:flex;align-items:center;justify-content:space-between;">
+                <span style="font-size:13px;font-weight:600;color:#111;">
+                    <i class="fa-solid fa-file-invoice-dollar me-2" style="color:#854f0b;"></i>Recent Bulk Enquiries
+                </span>
+                <a href="/DonaMart/admin/enquiries.php" class="dm-badge badge-warning" style="text-decoration:none;">View all</a>
             </div>
-            <div class="table-responsive">
-                <table class="table align-middle">
+            <div style="overflow-x:auto;">
+                <table class="dm-table">
                     <thead>
                         <tr>
                             <th>Client</th>
                             <th>Product</th>
                             <th>Qty</th>
+                            <th>Status</th>
                             <th>Date</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <?php if (!empty($recent_enquiries)): ?>
-                            <?php foreach ($recent_enquiries as $enq): ?>
-                                <tr>
-                                    <td>
-                                        <div class="font-weight-bold"><?php echo htmlspecialchars($enq['name']); ?></div>
-                                        <small class="text-muted"><?php echo htmlspecialchars($enq['company_name']); ?></small>
-                                    </td>
-                                    <td><?php echo htmlspecialchars($enq['product_name']); ?></td>
-                                    <td><span class="badge bg-secondary"><?php echo htmlspecialchars($enq['quantity']); ?></span></td>
-                                    <td class="text-muted text-xs"><?php echo date('d M Y', strtotime($enq['created_at'])); ?></td>
-                                </tr>
-                            <?php endforeach; ?>
-                        <?php else: ?>
-                            <tr>
-                                <td colspan="4" class="text-center text-muted">No enquiries received yet.</td>
-                            </tr>
-                        <?php endif; ?>
+                    <?php if (!empty($recent_enquiries)): ?>
+                        <?php foreach ($recent_enquiries as $enq): ?>
+                        <tr>
+                            <td>
+                                <div style="font-weight:600;"><?= htmlspecialchars($enq['name']) ?></div>
+                                <div style="font-size:11px;color:#aaa;"><?= htmlspecialchars($enq['company_name']) ?></div>
+                            </td>
+                            <td><?= htmlspecialchars($enq['product_name']) ?></td>
+                            <td>
+                                <span class="dm-badge badge-dark"><?= number_format($enq['quantity']) ?></span>
+                            </td>
+                            <td>
+                                <span class="dm-badge <?=
+                                    $enq['status'] === 'replied' ? 'badge-success' :
+                                    ($enq['status'] === 'closed' ? 'badge-secondary' : 'badge-warning')
+                                ?>">
+                                    <?= ucfirst($enq['status']) ?>
+                                </span>
+                            </td>
+                            <td style="color:#aaa;font-size:12px;"><?= date('d M', strtotime($enq['created_at'])) ?></td>
+                        </tr>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <tr><td colspan="5" style="text-align:center;color:#bbb;padding:24px;">No enquiries yet.</td></tr>
+                    <?php endif; ?>
                     </tbody>
                 </table>
             </div>
         </div>
     </div>
 
-    <!-- Recent Contact Messages -->
-    <div class="col-lg-6">
-        <div class="card border-0 rounded-4 shadow-sm p-4 bg-white">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h4 class="h5 mb-0 font-weight-bold"><i class="fa-solid fa-envelope me-2 text-info"></i>Recent Messages</h4>
-                <a href="/DonaMart/admin/enquiries.php?tab=messages" class="btn btn-outline-secondary btn-sm rounded-pill font-weight-bold text-xs">View All</a>
+    <!-- Recent Messages -->
+    <div class="col-lg-5">
+        <div class="dm-card">
+            <div style="padding:14px 18px;border-bottom:1px solid #f0f0f0;display:flex;align-items:center;justify-content:space-between;">
+                <span style="font-size:13px;font-weight:600;color:#111;">
+                    <i class="fa-solid fa-envelope me-2" style="color:#0f6e56;"></i>Recent Messages
+                </span>
+                <a href="/DonaMart/admin/enquiries.php?tab=messages" class="dm-badge badge-info" style="text-decoration:none;">View all</a>
             </div>
-            <div class="table-responsive">
-                <table class="table align-middle">
-                    <thead>
-                        <tr>
-                            <th>From</th>
-                            <th>Subject</th>
-                            <th>Date</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php if (!empty($recent_messages)): ?>
-                            <?php foreach ($recent_messages as $msg): ?>
-                                <tr>
-                                    <td class="font-weight-bold"><?php echo htmlspecialchars($msg['name']); ?></td>
-                                    <td><?php echo htmlspecialchars(substr($msg['subject'], 0, 30)) . '...'; ?></td>
-                                    <td class="text-muted text-xs"><?php echo date('d M Y', strtotime($msg['created_at'])); ?></td>
-                                </tr>
-                            <?php endforeach; ?>
-                        <?php else: ?>
-                            <tr>
-                                <td colspan="3" class="text-center text-muted">No messages received yet.</td>
-                            </tr>
-                        <?php endif; ?>
-                    </tbody>
-                </table>
+            <div>
+                <?php if (!empty($recent_messages)): ?>
+                    <?php foreach ($recent_messages as $msg): ?>
+                    <div style="display:flex;align-items:flex-start;gap:10px;padding:11px 18px;border-bottom:1px solid #f6f6f6;">
+                        <div style="width:7px;height:7px;border-radius:50%;margin-top:5px;flex-shrink:0;
+                            background:<?= $msg['status'] === 'unread' ? '#3b6d11' : '#ddd' ?>;"></div>
+                        <div style="flex:1;min-width:0;">
+                            <div style="font-size:13px;font-weight:<?= $msg['status']==='unread'?'600':'400' ?>;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+                                <?= htmlspecialchars(substr($msg['subject'],0,40)) ?>
+                            </div>
+                            <div style="font-size:11px;color:#aaa;"><?= htmlspecialchars($msg['name']) ?></div>
+                        </div>
+                        <div style="font-size:11px;color:#bbb;white-space:nowrap;">
+                            <?= date('d M', strtotime($msg['created_at'])) ?>
+                        </div>
+                    </div>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <div style="text-align:center;color:#bbb;padding:24px;font-size:13px;">No messages yet.</div>
+                <?php endif; ?>
             </div>
         </div>
     </div>

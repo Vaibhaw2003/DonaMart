@@ -2,7 +2,7 @@
 // database/init_db.php
 
 $host = '127.0.0.1';
-$port = 3307;
+$port = 3306;
 $user = 'root';
 $used_pass = '';
 
@@ -10,7 +10,7 @@ try {
     $pdo = new PDO("mysql:host=$host;port=$port", $user, $used_pass);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 } catch (PDOException $e) {
-    die("Database connection failed on port 3307: " . $e->getMessage() . "\n");
+    die("Database connection failed on port 3306: " . $e->getMessage() . "\n");
 }
 
 try {
