@@ -7,7 +7,7 @@ $message = '';
 $message_type = '';
 $active_tab = filter_input(INPUT_GET, 'tab', FILTER_SANITIZE_SPECIAL_CHARS) ?? 'enquiries';
 
-// UPDATE status
+// MARK replied
 if (isset($_GET['mark_replied']) && is_numeric($_GET['mark_replied'])) {
     $id  = intval($_GET['mark_replied']);
     $tab = filter_input(INPUT_GET, 'tab', FILTER_SANITIZE_SPECIAL_CHARS) ?? 'enquiries';
@@ -17,9 +17,11 @@ if (isset($_GET['mark_replied']) && is_numeric($_GET['mark_replied'])) {
         } else {
             $pdo->prepare("UPDATE bulk_enquiries SET status='replied' WHERE id=?")->execute([$id]);
         }
-        $message = 'Marked as replied!'; $message_type = 'success';
+        $message = 'Marked as replied!';
+        $message_type = 'success';
     } catch (PDOException $e) {
-        $message = 'Error updating status.'; $message_type = 'danger';
+        $message = 'Error updating status.';
+        $message_type = 'danger';
     }
 }
 
@@ -30,211 +32,290 @@ if (isset($_GET['delete']) && is_numeric($_GET['delete'])) {
     try {
         $table = ($tab === 'messages') ? 'contact_messages' : 'bulk_enquiries';
         $pdo->prepare("DELETE FROM $table WHERE id=?")->execute([$id]);
-        $message = 'Deleted successfully!'; $message_type = 'success';
+        $message = 'Deleted successfully!';
+        $message_type = 'success';
     } catch (PDOException $e) {
-        $message = 'Error deleting record.'; $message_type = 'danger';
+        $message = 'Error deleting record.';
+        $message_type = 'danger';
     }
 }
 
-// Fetch data
+// Export CSV
+if (isset($_GET['export']) && $_GET['export'] === 'csv' && $active_tab === 'newsletter') {
+    $subs = $pdo->query("SELECT email, created_at FROM newsletter_subscribers ORDER BY id DESC")->fetchAll();
+    header('Content-Type: text/csv');
+    header('Content-Disposition: attachment; filename="subscribers_' . date('Y-m-d') . '.csv"');
+    $f = fopen('php://output', 'w');
+    fputcsv($f, ['Email', 'Subscribed On']);
+    foreach ($subs as $s) fputcsv($f, [$s['email'], $s['created_at']]);
+    fclose($f);
+    exit;
+}
+
 $bulk_enquiries   = $pdo->query("SELECT * FROM bulk_enquiries ORDER BY id DESC")->fetchAll();
 $contact_messages = $pdo->query("SELECT * FROM contact_messages ORDER BY id DESC")->fetchAll();
 $subscribers      = $pdo->query("SELECT * FROM newsletter_subscribers ORDER BY id DESC")->fetchAll();
 
+$pending_enq  = count(array_filter($bulk_enquiries,   fn($e) => $e['status'] === 'pending'));
+$unread_msg   = count(array_filter($contact_messages, fn($m) => $m['status'] === 'unread'));
+
 require_once __DIR__ . '/includes/header.php';
 ?>
 
-<div class="pt-3 pb-2 mb-3 border-bottom">
-    <h1 class="h2 font-weight-bold">Enquiries & Messages</h1>
+<!-- Page Header -->
+<div class="page-header-row">
+    <div class="page-header-title">
+        <i class="fa-solid fa-envelope-open-text me-2" style="color:var(--forest-mid);"></i>Enquiries & Messages
+    </div>
+    <?php if ($active_tab === 'newsletter'): ?>
+    <a href="?tab=newsletter&export=csv" class="btn-forest" style="text-decoration:none;padding:8px 18px;border-radius:8px;">
+        <i class="fa-solid fa-file-csv"></i> Export CSV
+    </a>
+    <?php endif; ?>
 </div>
 
 <?php if ($message): ?>
-<div class="alert alert-<?php echo $message_type; ?> alert-dismissible fade show">
-    <?php echo $message; ?> <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+<div class="dm-alert dm-alert-<?= $message_type ?> mb-3">
+    <i class="fa-solid fa-<?= $message_type === 'success' ? 'circle-check' : 'circle-exclamation' ?>"></i>
+    <?= htmlspecialchars($message) ?>
 </div>
 <?php endif; ?>
 
-<!-- Nav Tabs -->
-<ul class="nav nav-tabs mb-4">
-    <li class="nav-item">
-        <a class="nav-link <?php echo $active_tab==='enquiries' ? 'active fw-bold' : ''; ?>" href="?tab=enquiries">
-            <i class="fa-solid fa-file-invoice-dollar me-1"></i> Bulk Enquiries
-            <span class="badge bg-warning text-dark ms-1"><?php echo count($bulk_enquiries); ?></span>
-        </a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link <?php echo $active_tab==='messages' ? 'active fw-bold' : ''; ?>" href="?tab=messages">
-            <i class="fa-solid fa-envelope me-1"></i> Contact Messages
-            <span class="badge bg-info ms-1"><?php echo count($contact_messages); ?></span>
-        </a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link <?php echo $active_tab==='newsletter' ? 'active fw-bold' : ''; ?>" href="?tab=newsletter">
-            <i class="fa-solid fa-newspaper me-1"></i> Newsletter
-            <span class="badge bg-success ms-1"><?php echo count($subscribers); ?></span>
-        </a>
-    </li>
-</ul>
+<!-- Summary Cards -->
+<div class="row g-3 mb-4">
+    <div class="col-sm-4">
+        <div class="stat-card">
+            <div class="stat-icon-wrap si-amber"><i class="fa-solid fa-file-invoice-dollar"></i></div>
+            <div class="stat-label">Bulk Enquiries</div>
+            <div class="stat-value"><?= count($bulk_enquiries) ?></div>
+            <div class="stat-sub"><?= $pending_enq ?> pending</div>
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div class="stat-card">
+            <div class="stat-icon-wrap si-teal"><i class="fa-solid fa-envelope"></i></div>
+            <div class="stat-label">Contact Messages</div>
+            <div class="stat-value"><?= count($contact_messages) ?></div>
+            <div class="stat-sub"><?= $unread_msg ?> unread</div>
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div class="stat-card">
+            <div class="stat-icon-wrap si-green"><i class="fa-solid fa-newspaper"></i></div>
+            <div class="stat-label">Subscribers</div>
+            <div class="stat-value"><?= count($subscribers) ?></div>
+            <div class="stat-sub">newsletter list</div>
+        </div>
+    </div>
+</div>
+
+<!-- Tabs -->
+<div style="display:flex;gap:4px;margin-bottom:16px;border-bottom:1px solid #eee;padding-bottom:0;">
+    <?php
+    $tabs = [
+        'enquiries'  => ['label'=>'Bulk Enquiries',    'icon'=>'fa-file-invoice-dollar', 'count'=>count($bulk_enquiries),   'badge'=>$pending_enq > 0 ? $pending_enq : null],
+        'messages'   => ['label'=>'Contact Messages',  'icon'=>'fa-envelope',            'count'=>count($contact_messages), 'badge'=>$unread_msg > 0 ? $unread_msg : null],
+        'newsletter' => ['label'=>'Newsletter',        'icon'=>'fa-newspaper',           'count'=>count($subscribers),      'badge'=>null],
+    ];
+    foreach ($tabs as $key => $tab): $isActive = $active_tab === $key; ?>
+    <a href="?tab=<?= $key ?>"
+       style="display:flex;align-items:center;gap:7px;padding:10px 16px;font-size:13px;font-weight:600;text-decoration:none;border-bottom:2px solid <?= $isActive ? 'var(--forest)' : 'transparent' ?>;color:<?= $isActive ? 'var(--forest)' : '#888' ?>;margin-bottom:-1px;transition:color 0.15s;">
+        <i class="fa-solid <?= $tab['icon'] ?>"></i>
+        <?= $tab['label'] ?>
+        <span style="background:<?= $isActive ? 'var(--forest)' : '#eee' ?>;color:<?= $isActive ? '#fff' : '#888' ?>;font-size:10px;padding:2px 7px;border-radius:10px;font-weight:700;">
+            <?= $tab['count'] ?>
+        </span>
+        <?php if ($tab['badge']): ?>
+        <span style="background:#faeeda;color:#854f0b;font-size:10px;padding:2px 6px;border-radius:10px;font-weight:700;">
+            <?= $tab['badge'] ?> new
+        </span>
+        <?php endif; ?>
+    </a>
+    <?php endforeach; ?>
+</div>
 
 <!-- BULK ENQUIRIES TAB -->
 <?php if ($active_tab === 'enquiries'): ?>
-<div class="card border-0 rounded-4 shadow-sm">
-    <div class="card-body p-0">
-        <div class="table-responsive">
-            <table class="table align-middle mb-0">
-                <thead class="bg-light">
+<div class="dm-card">
+    <div style="overflow-x:auto;">
+        <table class="dm-table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Client</th>
+                    <th>Product</th>
+                    <th>Qty</th>
+                    <th>Contact</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php if (!empty($bulk_enquiries)): ?>
+                    <?php foreach ($bulk_enquiries as $e): ?>
                     <tr>
-                        <th class="p-3">#</th>
-                        <th>Client</th>
-                        <th>Product</th>
-                        <th>Qty</th>
-                        <th>Contact</th>
-                        <th>Status</th>
-                        <th>Date</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php if (!empty($bulk_enquiries)): ?>
-                        <?php foreach ($bulk_enquiries as $e): ?>
-                        <tr>
-                            <td class="p-3"><?php echo $e['id']; ?></td>
-                            <td>
-                                <div class="fw-bold"><?php echo htmlspecialchars($e['name']); ?></div>
-                                <small class="text-muted"><?php echo htmlspecialchars($e['company_name']); ?></small>
-                            </td>
-                            <td><?php echo htmlspecialchars($e['product_name']); ?></td>
-                            <td><span class="badge bg-dark"><?php echo number_format($e['quantity']); ?> pcs</span></td>
-                            <td>
-                                <div><i class="fa-solid fa-phone text-muted me-1"></i><?php echo htmlspecialchars($e['phone']); ?></div>
-                                <div><i class="fa-solid fa-envelope text-muted me-1"></i><?php echo htmlspecialchars($e['email']); ?></div>
-                            </td>
-                            <td>
-                                <span class="badge <?php echo $e['status']==='replied' ? 'bg-success' : ($e['status']==='closed' ? 'bg-secondary' : 'bg-warning text-dark'); ?>">
-                                    <?php echo ucfirst($e['status']); ?>
-                                </span>
-                            </td>
-                            <td class="text-muted"><?php echo date('d M Y', strtotime($e['created_at'])); ?></td>
-                            <td>
+                        <td style="color:#aaa;font-size:12px;"><?= $e['id'] ?></td>
+                        <td>
+                            <div style="font-weight:600;color:#111;"><?= htmlspecialchars($e['name']) ?></div>
+                            <div style="font-size:11px;color:#aaa;"><?= htmlspecialchars($e['company_name']) ?></div>
+                        </td>
+                        <td style="font-size:13px;"><?= htmlspecialchars($e['product_name']) ?></td>
+                        <td>
+                            <span class="dm-badge badge-dark"><?= number_format($e['quantity']) ?> pcs</span>
+                        </td>
+                        <td>
+                            <div style="font-size:12px;"><i class="fa-solid fa-phone" style="color:#aaa;width:14px;"></i> <?= htmlspecialchars($e['phone']) ?></div>
+                            <div style="font-size:12px;margin-top:2px;"><i class="fa-solid fa-envelope" style="color:#aaa;width:14px;"></i> <?= htmlspecialchars($e['email']) ?></div>
+                        </td>
+                        <td>
+                            <span class="dm-badge <?=
+                                $e['status']==='replied' ? 'badge-success' :
+                                ($e['status']==='closed' ? 'badge-secondary' : 'badge-warning')
+                            ?>">
+                                <?= ucfirst($e['status']) ?>
+                            </span>
+                        </td>
+                        <td style="color:#aaa;font-size:12px;"><?= date('d M Y', strtotime($e['created_at'])) ?></td>
+                        <td>
+                            <div style="display:flex;gap:5px;flex-wrap:wrap;">
                                 <?php if ($e['status'] === 'pending'): ?>
-                                <a href="?tab=enquiries&mark_replied=<?php echo $e['id']; ?>" class="btn btn-sm btn-outline-success rounded-pill me-1">
+                                <a href="?tab=enquiries&mark_replied=<?= $e['id'] ?>"
+                                   class="dm-badge badge-success"
+                                   style="text-decoration:none;padding:5px 9px;border-radius:6px;" title="Mark as replied">
                                     <i class="fa-solid fa-check"></i>
                                 </a>
                                 <?php endif; ?>
-                                <a href="https://wa.me/<?php echo preg_replace('/[^0-9]/', '', $e['phone']); ?>?text=Hi%20<?php echo urlencode($e['name']); ?>,%20your%20bulk%20enquiry%20for%20<?php echo urlencode($e['product_name']); ?>%20has%20been%20received.%20Here%20is%20our%20quote..." target="_blank" class="btn btn-sm btn-outline-success rounded-pill me-1">
+                                <a href="https://wa.me/<?= preg_replace('/[^0-9]/', '', $e['phone']) ?>?text=Hi%20<?= urlencode($e['name']) ?>,%20your%20bulk%20enquiry%20for%20<?= urlencode($e['product_name']) ?>%20has%20been%20received."
+                                   target="_blank"
+                                   class="dm-badge"
+                                   style="background:#e8faf0;color:#15803d;text-decoration:none;padding:5px 9px;border-radius:6px;" title="WhatsApp">
                                     <i class="fa-brands fa-whatsapp"></i>
                                 </a>
-                                <a href="?tab=enquiries&delete=<?php echo $e['id']; ?>" class="btn btn-sm btn-outline-danger rounded-pill" onclick="return confirm('Delete this enquiry?')">
+                                <a href="?tab=enquiries&delete=<?= $e['id'] ?>"
+                                   class="dm-badge badge-danger"
+                                   style="text-decoration:none;padding:5px 9px;border-radius:6px;" title="Delete"
+                                   onclick="return confirm('Delete this enquiry?')">
                                     <i class="fa-solid fa-trash"></i>
                                 </a>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colspan="8" class="bg-light text-sm text-muted">
-                                <strong>Address:</strong> <?php echo htmlspecialchars($e['address']); ?>
-                                <?php if ($e['message']): ?> | <strong>Note:</strong> <?php echo htmlspecialchars($e['message']); ?><?php endif; ?>
-                            </td>
-                        </tr>
-                        <?php endforeach; ?>
-                    <?php else: ?>
-                        <tr><td colspan="8" class="text-center p-4 text-muted">No bulk enquiries yet.</td></tr>
+                            </div>
+                        </td>
+                    </tr>
+                    <?php if ($e['address'] || $e['message']): ?>
+                    <tr style="background:#fafaf8;">
+                        <td colspan="8" style="font-size:12px;color:#888;padding:6px 14px;">
+                            <?php if ($e['address']): ?>
+                                <i class="fa-solid fa-location-dot me-1" style="color:#bbb;"></i>
+                                <strong>Address:</strong> <?= htmlspecialchars($e['address']) ?>
+                            <?php endif; ?>
+                            <?php if ($e['message']): ?>
+                                &nbsp;&nbsp;<i class="fa-solid fa-comment me-1" style="color:#bbb;"></i>
+                                <strong>Note:</strong> <?= htmlspecialchars($e['message']) ?>
+                            <?php endif; ?>
+                        </td>
+                    </tr>
                     <?php endif; ?>
-                </tbody>
-            </table>
-        </div>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <tr><td colspan="8" style="text-align:center;padding:40px;color:#aaa;">No bulk enquiries yet.</td></tr>
+                <?php endif; ?>
+            </tbody>
+        </table>
     </div>
 </div>
 
 <!-- CONTACT MESSAGES TAB -->
 <?php elseif ($active_tab === 'messages'): ?>
-<div class="card border-0 rounded-4 shadow-sm">
-    <div class="card-body p-0">
-        <div class="table-responsive">
-            <table class="table align-middle mb-0">
-                <thead class="bg-light">
-                    <tr>
-                        <th class="p-3">#</th>
-                        <th>Name</th>
-                        <th>Subject</th>
-                        <th>Email</th>
-                        <th>Phone</th>
-                        <th>Status</th>
-                        <th>Date</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php if (!empty($contact_messages)): ?>
-                        <?php foreach ($contact_messages as $m): ?>
-                        <tr class="<?php echo $m['status']==='unread' ? 'fw-bold' : ''; ?>">
-                            <td class="p-3"><?php echo $m['id']; ?></td>
-                            <td><?php echo htmlspecialchars($m['name']); ?></td>
-                            <td><?php echo htmlspecialchars($m['subject']); ?></td>
-                            <td><?php echo htmlspecialchars($m['email']); ?></td>
-                            <td><?php echo htmlspecialchars($m['phone']); ?></td>
-                            <td>
-                                <span class="badge <?php echo $m['status']==='replied' ? 'bg-success' : ($m['status']==='read' ? 'bg-info' : 'bg-warning text-dark'); ?>">
-                                    <?php echo ucfirst($m['status']); ?>
-                                </span>
-                            </td>
-                            <td class="text-muted"><?php echo date('d M Y', strtotime($m['created_at'])); ?></td>
-                            <td>
-                                <a href="?tab=messages&mark_replied=<?php echo $m['id']; ?>" class="btn btn-sm btn-outline-success rounded-pill me-1">
+<div class="dm-card">
+    <div style="overflow-x:auto;">
+        <table class="dm-table">
+            <thead>
+                <tr><th>#</th><th>Name</th><th>Subject</th><th>Email</th><th>Phone</th><th>Status</th><th>Date</th><th>Actions</th></tr>
+            </thead>
+            <tbody>
+                <?php if (!empty($contact_messages)): ?>
+                    <?php foreach ($contact_messages as $m): ?>
+                    <tr style="<?= $m['status']==='unread' ? 'font-weight:600;' : '' ?>">
+                        <td style="color:#aaa;font-size:12px;"><?= $m['id'] ?></td>
+                        <td style="font-weight:600;"><?= htmlspecialchars($m['name']) ?></td>
+                        <td><?= htmlspecialchars($m['subject']) ?></td>
+                        <td style="font-size:12px;"><?= htmlspecialchars($m['email']) ?></td>
+                        <td style="font-size:12px;"><?= htmlspecialchars($m['phone']) ?></td>
+                        <td>
+                            <span class="dm-badge <?=
+                                $m['status']==='replied' ? 'badge-success' :
+                                ($m['status']==='read'   ? 'badge-info'    : 'badge-warning')
+                            ?>">
+                                <?= ucfirst($m['status']) ?>
+                            </span>
+                        </td>
+                        <td style="color:#aaa;font-size:12px;"><?= date('d M Y', strtotime($m['created_at'])) ?></td>
+                        <td>
+                            <div style="display:flex;gap:5px;">
+                                <a href="?tab=messages&mark_replied=<?= $m['id'] ?>"
+                                   class="dm-badge badge-success"
+                                   style="text-decoration:none;padding:5px 9px;border-radius:6px;" title="Mark replied">
                                     <i class="fa-solid fa-check"></i>
                                 </a>
-                                <a href="mailto:<?php echo htmlspecialchars($m['email']); ?>?subject=Re: <?php echo urlencode($m['subject']); ?>" class="btn btn-sm btn-outline-primary rounded-pill me-1">
+                                <a href="mailto:<?= htmlspecialchars($m['email']) ?>?subject=Re: <?= urlencode($m['subject']) ?>"
+                                   class="dm-badge badge-info"
+                                   style="text-decoration:none;padding:5px 9px;border-radius:6px;" title="Reply via email">
                                     <i class="fa-solid fa-reply"></i>
                                 </a>
-                                <a href="?tab=messages&delete=<?php echo $m['id']; ?>" class="btn btn-sm btn-outline-danger rounded-pill" onclick="return confirm('Delete this message?')">
+                                <a href="?tab=messages&delete=<?= $m['id'] ?>"
+                                   class="dm-badge badge-danger"
+                                   style="text-decoration:none;padding:5px 9px;border-radius:6px;" title="Delete"
+                                   onclick="return confirm('Delete this message?')">
                                     <i class="fa-solid fa-trash"></i>
                                 </a>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colspan="8" class="bg-light text-sm text-muted">
-                                <strong>Message:</strong> <?php echo htmlspecialchars($m['message']); ?>
-                            </td>
-                        </tr>
-                        <?php endforeach; ?>
-                    <?php else: ?>
-                        <tr><td colspan="8" class="text-center p-4 text-muted">No contact messages yet.</td></tr>
-                    <?php endif; ?>
-                </tbody>
-            </table>
-        </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr style="background:#fafaf8;">
+                        <td colspan="8" style="font-size:12px;color:#888;padding:6px 14px;">
+                            <i class="fa-solid fa-comment me-1" style="color:#bbb;"></i>
+                            <strong>Message:</strong> <?= htmlspecialchars($m['message']) ?>
+                        </td>
+                    </tr>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <tr><td colspan="8" style="text-align:center;padding:40px;color:#aaa;">No contact messages yet.</td></tr>
+                <?php endif; ?>
+            </tbody>
+        </table>
     </div>
 </div>
 
-<!-- NEWSLETTER SUBSCRIBERS TAB -->
+<!-- NEWSLETTER TAB -->
 <?php elseif ($active_tab === 'newsletter'): ?>
-<div class="card border-0 rounded-4 shadow-sm">
-    <div class="card-header bg-white border-bottom p-3 d-flex justify-content-between align-items-center">
-        <h5 class="mb-0 fw-bold">Newsletter Subscribers (<?php echo count($subscribers); ?>)</h5>
-        <a href="?tab=newsletter&export=csv" class="btn btn-outline-success rounded-pill btn-sm">
+<div class="dm-card">
+    <div style="padding:14px 18px;border-bottom:1px solid #f0f0f0;display:flex;align-items:center;justify-content:space-between;">
+        <span style="font-size:13px;font-weight:600;color:#111;">
+            Newsletter Subscribers <span style="font-size:12px;font-weight:400;color:#aaa;">(<?= count($subscribers) ?> total)</span>
+        </span>
+        <a href="?tab=newsletter&export=csv" class="btn-forest" style="text-decoration:none;padding:6px 16px;border-radius:7px;font-size:12px;">
             <i class="fa-solid fa-file-csv me-1"></i> Export CSV
         </a>
     </div>
-    <div class="card-body p-0">
-        <div class="table-responsive">
-            <table class="table align-middle mb-0">
-                <thead class="bg-light">
-                    <tr><th class="p-3">#</th><th>Email Address</th><th>Subscribed On</th></tr>
-                </thead>
-                <tbody>
-                    <?php if (!empty($subscribers)): ?>
-                        <?php foreach ($subscribers as $i => $s): ?>
-                        <tr>
-                            <td class="p-3"><?php echo $i + 1; ?></td>
-                            <td><?php echo htmlspecialchars($s['email']); ?></td>
-                            <td class="text-muted"><?php echo date('d M Y, H:i', strtotime($s['created_at'])); ?></td>
-                        </tr>
-                        <?php endforeach; ?>
-                    <?php else: ?>
-                        <tr><td colspan="3" class="text-center p-4 text-muted">No subscribers yet.</td></tr>
-                    <?php endif; ?>
-                </tbody>
-            </table>
-        </div>
+    <div style="overflow-x:auto;">
+        <table class="dm-table">
+            <thead>
+                <tr><th>#</th><th>Email Address</th><th>Subscribed On</th></tr>
+            </thead>
+            <tbody>
+                <?php if (!empty($subscribers)): ?>
+                    <?php foreach ($subscribers as $i => $s): ?>
+                    <tr>
+                        <td style="color:#aaa;font-size:12px;"><?= $i + 1 ?></td>
+                        <td style="font-weight:500;"><?= htmlspecialchars($s['email']) ?></td>
+                        <td style="color:#aaa;font-size:12px;"><?= date('d M Y, H:i', strtotime($s['created_at'])) ?></td>
+                    </tr>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <tr><td colspan="3" style="text-align:center;padding:40px;color:#aaa;">No subscribers yet.</td></tr>
+                <?php endif; ?>
+            </tbody>
+        </table>
     </div>
 </div>
 <?php endif; ?>
