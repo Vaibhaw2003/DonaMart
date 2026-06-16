@@ -1,10 +1,8 @@
 <?php
-// config/db.php
-
 $host   = 'localhost';
-$dbname = 'donamart_db';   // ← apna database name yahan likho
-$user   = 'root';       // ← XAMPP default username
-$pass   = '';           // ← XAMPP mein default password BLANK hota hai
+$dbname = 'donamart_db';   // ← YAHI CHANGE KIYA
+$user   = 'root';
+$pass   = '';              // XAMPP mein blank rehta hai
 
 try {
     $pdo = new PDO(
@@ -17,7 +15,7 @@ try {
             PDO::ATTR_EMULATE_PREPARES   => false,
         ]
     );
-} catch (PDOException $e) {
+}catch (PDOException $e) {
     // Show friendly error
     die("
     <div style='font-family:sans-serif;max-width:500px;margin:80px auto;padding:30px;
