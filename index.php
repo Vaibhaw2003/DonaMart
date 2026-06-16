@@ -20,7 +20,7 @@ try {
 <!-- ── HERO ── -->
 <section class="hero-section">
     <div class="container">
-        <div class="row align-items-center" style="min-height:82vh;">
+        <div class="row align-items-center">
             <div class="col-lg-7" data-aos="fade-right">
                 <div class="hero-badge mb-4">
                     <i class="fa-solid fa-leaf"></i> 100% Biodegradable & Compostable
@@ -81,7 +81,7 @@ try {
     </div>
 </section>
 
-<!-- ── CATEGORIES — FIXED ── -->
+<!-- ── CATEGORIES ── -->
 <section class="py-5 bg-white">
     <div class="container py-4">
         <div class="text-center mb-5" data-aos="fade-up">
@@ -89,61 +89,31 @@ try {
             <h2 class="mt-2">Our Biodegradable Tableware Range</h2>
             <div class="section-divider mx-auto"></div>
         </div>
-
         <div class="row g-4">
             <?php
-            // Each category: [name, slug, icon, gradient-colors, description]
             $cats = [
-                ['Areca Leaf Plates',  'areca-leaf-plates',  'fa-plate-wheat',    '#2d6a4f','#1b4332', 'Round, square & oval plates from areca palm'],
-                ['Dona',               'dona',               'fa-bowl-food',      '#5c4033','#3e2723', 'Stitched & pressed leaf bowls in all sizes'],
-                ['Pattal',             'pattal',             'fa-leaf',           '#1b5e20','#0f2b1f', 'Traditional flat leaf plates, large & jumbo'],
-                ['Bowls',              'bowls',              'fa-bowl-rice',      '#4a148c','#1b4332', 'Deep bowls for curries, soups & desserts'],
-                ['Compartment Plates', 'compartment-plates', 'fa-table-cells',    '#e65100','#bf360c', '2 & 3 section divided meal plates'],
-                ['Disposable Glasses', 'disposable-glasses', 'fa-wine-glass',     '#006064','#004d40', 'Eco paper & leaf glasses for events'],
+                ['Areca Leaf Plates',  'areca-leaf-plates',  'fa-plate-wheat',  '#2d6a4f','#1b4332', 'Round, square & oval plates from areca palm'],
+                ['Dona',               'dona',               'fa-bowl-food',    '#5c4033','#3e2723', 'Stitched & pressed leaf bowls in all sizes'],
+                ['Pattal',             'pattal',             'fa-leaf',         '#1b5e20','#0f2b1f', 'Traditional flat leaf plates, large & jumbo'],
+                ['Bowls',              'bowls',              'fa-bowl-rice',    '#4a148c','#1b4332', 'Deep bowls for curries, soups & desserts'],
+                ['Compartment Plates', 'compartment-plates', 'fa-table-cells',  '#e65100','#bf360c', '2 & 3 section divided meal plates'],
+                ['Disposable Glasses', 'disposable-glasses', 'fa-wine-glass',   '#006064','#004d40', 'Eco paper & leaf glasses for events'],
             ];
             $delays = [100,200,300,400,500,600];
             foreach ($cats as $i => $cat): ?>
             <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="<?= $delays[$i] ?>">
                 <a href="/DonaMart/products.php?category=<?= $cat[1] ?>" style="text-decoration:none;">
-                    <div style="
-                        background: linear-gradient(135deg, <?= $cat[3] ?> 0%, <?= $cat[4] ?> 100%);
-                        border-radius: 16px;
-                        padding: 36px 28px;
-                        position: relative;
-                        overflow: hidden;
-                        height: 200px;
-                        display: flex;
-                        flex-direction: column;
-                        justify-content: flex-end;
-                        transition: transform 0.25s, box-shadow 0.25s;
-                        cursor: pointer;
-                    "
-                    onmouseover="this.style.transform='translateY(-6px)';this.style.boxShadow='0 16px 40px rgba(0,0,0,0.2)'"
-                    onmouseout="this.style.transform='';this.style.boxShadow=''">
-
-                        <!-- Background icon watermark -->
-                        <i class="fa-solid <?= $cat[2] ?>"
-                           style="position:absolute;top:16px;right:20px;font-size:72px;
-                                  color:rgba(255,255,255,0.1);pointer-events:none;"></i>
-
-                        <!-- Small icon badge -->
-                        <div style="
-                            width:44px;height:44px;
-                            background:rgba(255,255,255,0.15);
-                            border-radius:10px;
-                            display:flex;align-items:center;justify-content:center;
-                            margin-bottom:14px;
-                        ">
+                    <div style="background:linear-gradient(135deg,<?= $cat[3] ?> 0%,<?= $cat[4] ?> 100%);border-radius:16px;padding:36px 28px;position:relative;overflow:hidden;height:200px;display:flex;flex-direction:column;justify-content:flex-end;transition:transform 0.25s,box-shadow 0.25s;cursor:pointer;"
+                         onmouseover="this.style.transform='translateY(-6px)';this.style.boxShadow='0 16px 40px rgba(0,0,0,0.2)'"
+                         onmouseout="this.style.transform='';this.style.boxShadow=''">
+                        <i class="fa-solid <?= $cat[2] ?>" style="position:absolute;top:16px;right:20px;font-size:72px;color:rgba(255,255,255,0.1);pointer-events:none;"></i>
+                        <div style="width:44px;height:44px;background:rgba(255,255,255,0.15);border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:14px;">
                             <i class="fa-solid <?= $cat[2] ?>" style="color:#fff;font-size:20px;"></i>
                         </div>
-
                         <h4 style="color:#fff;font-size:18px;font-weight:700;margin:0 0 4px;"><?= $cat[0] ?></h4>
                         <p style="color:rgba(255,255,255,0.65);font-size:12px;margin:0 0 12px;"><?= $cat[5] ?></p>
-
-                        <div style="display:inline-flex;align-items:center;gap:6px;
-                                    color:rgba(255,255,255,0.9);font-size:13px;font-weight:600;">
-                            View Products
-                            <i class="fa-solid fa-arrow-right" style="font-size:11px;"></i>
+                        <div style="display:inline-flex;align-items:center;gap:6px;color:rgba(255,255,255,0.9);font-size:13px;font-weight:600;">
+                            View Products <i class="fa-solid fa-arrow-right" style="font-size:11px;"></i>
                         </div>
                     </div>
                 </a>
@@ -178,8 +148,7 @@ try {
                         </div>
                         <div class="product-details">
                             <h4 class="h5 mb-2 font-weight-bold text-primary-dark">
-                                <a href="/DonaMart/product-details.php?slug=<?= urlencode($p['slug']) ?>"
-                                   class="text-decoration-none text-primary-dark hover-accent">
+                                <a href="/DonaMart/product-details.php?slug=<?= urlencode($p['slug']) ?>" class="text-decoration-none text-primary-dark hover-accent">
                                     <?= htmlspecialchars($p['name']) ?>
                                 </a>
                             </h4>
@@ -190,10 +159,8 @@ try {
                                 <tr><td>MOQ:</td><td><?= number_format($p['moq']) ?> pcs</td></tr>
                             </table>
                             <div class="product-actions d-grid gap-2">
-                                <a href="/DonaMart/bulk-order.php?product=<?= urlencode($p['name']) ?>"
-                                   class="btn btn-accent rounded-pill btn-sm font-weight-bold">Enquire Now</a>
-                                <a href="https://wa.me/918874812003?text=Hi%20DonaMart,%20I'm%20interested%20in:%20<?= urlencode($p['name']) ?>"
-                                   target="_blank" class="btn btn-whatsapp rounded-pill btn-sm font-weight-bold">
+                                <a href="/DonaMart/bulk-order.php?product=<?= urlencode($p['name']) ?>" class="btn btn-accent rounded-pill btn-sm font-weight-bold">Enquire Now</a>
+                                <a href="https://wa.me/918874812003?text=Hi%20DonaMart,%20I'm%20interested%20in:%20<?= urlencode($p['name']) ?>" target="_blank" class="btn btn-whatsapp rounded-pill btn-sm font-weight-bold">
                                     <i class="fa-brands fa-whatsapp me-1"></i>WhatsApp Order
                                 </a>
                             </div>
@@ -223,12 +190,12 @@ try {
         <div class="row g-4">
             <?php
             $whys = [
-                ['fa-industry',     'si-green', 'Large Scale Manufacturing',  'High-capacity hydraulic machines fulfill heavy bulk orders within strict deadlines without compromising quality.'],
-                ['fa-shield-halved','si-teal',  'Quality Standards',          'Every batch undergoes rigorous quality checks for thickness, moisture control, and heat-sealing perfection.'],
-                ['fa-globe',        'si-amber', 'Global Shipping',            'Trusted supply chain supplying sustainable tableware to domestic markets and exporting to 18+ countries.'],
-                ['fa-leaf',         'si-green', '100% Eco Friendly',         'Zero chemicals, dyes or lacquers. Fully compostable within 60–90 days — returns nutrients back to soil.'],
-                ['fa-tag',          'si-teal',  'Factory Direct Pricing',    'No middlemen. Direct factory rates for bulk buyers with flexible MOQs starting from 1,000 pieces.'],
-                ['fa-headset',      'si-amber', 'Dedicated Support',         '24-hour response guarantee. Dedicated account managers for export clients and large distributors.'],
+                ['fa-industry',     'si-green', 'Large Scale Manufacturing', 'High-capacity hydraulic machines fulfill heavy bulk orders within strict deadlines without compromising quality.'],
+                ['fa-shield-halved','si-teal',  'Quality Standards',         'Every batch undergoes rigorous quality checks for thickness, moisture control, and heat-sealing perfection.'],
+                ['fa-globe',        'si-amber', 'Global Shipping',           'Trusted supply chain supplying sustainable tableware to domestic markets and exporting to 18+ countries.'],
+                ['fa-leaf',         'si-green', '100% Eco Friendly',        'Zero chemicals, dyes or lacquers. Fully compostable within 60–90 days — returns nutrients back to soil.'],
+                ['fa-tag',          'si-teal',  'Factory Direct Pricing',   'No middlemen. Direct factory rates for bulk buyers with flexible MOQs starting from 1,000 pieces.'],
+                ['fa-headset',      'si-amber', 'Dedicated Support',        '24-hour response guarantee. Dedicated account managers for export clients and large distributors.'],
             ];
             foreach ($whys as $i => $w): ?>
             <div class="col-lg-4 col-md-6" data-aos="zoom-in" data-aos-delay="<?= ($i+1)*100 ?>">
@@ -322,9 +289,7 @@ try {
                     </div>
                     <p class="text-muted italic mb-0" style="font-size:14px;line-height:1.7;"><?= $t[0] ?></p>
                     <div class="testimonial-user">
-                        <img src="/DonaMart/uploads/<?= $t[3] ?>" alt="<?= $t[1] ?>"
-                             class="testimonial-avatar"
-                             onerror="this.style.display='none'">
+                        <img src="/DonaMart/uploads/<?= $t[3] ?>" alt="<?= $t[1] ?>" class="testimonial-avatar" onerror="this.style.display='none'">
                         <div>
                             <h5 class="mb-0 font-weight-bold text-primary-dark" style="font-size:14px;"><?= $t[1] ?></h5>
                             <small class="text-muted"><?= $t[2] ?></small>
@@ -337,18 +302,18 @@ try {
     </div>
 </section>
 
-<!-- ── CTA ── -->
-<section class="container my-5 py-2" data-aos="zoom-in">
-    <div class="cta-section text-center">
-        <div class="row justify-content-center">
-            <div class="col-lg-8" style="position:relative;z-index:1;">
-                <span class="section-label" style="color:var(--tan,#b5835a);">Partner With Us</span>
-                <h2 class="font-weight-bold mb-3 mt-2" style="color:#fff;">Ready to Make the Eco-Friendly Shift?</h2>
-                <p class="mb-5" style="color:rgba(255,255,255,0.6);font-size:15px;max-width:500px;margin:0 auto 28px;line-height:1.7;">
+<!-- ── CTA — FIXED: full-width section, NOT container ── -->
+<section style="background:var(--accent-color,#b5835a);padding:60px 0;margin:0;">
+    <div class="container">
+        <div class="row justify-content-center text-center" data-aos="zoom-in">
+            <div class="col-lg-8">
+                <span style="display:inline-block;background:rgba(255,255,255,0.15);color:rgba(255,255,255,0.75);font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;padding:6px 16px;border-radius:50px;margin-bottom:16px;">Partner With Us</span>
+                <h2 class="font-weight-bold mb-3" style="color:#fff;">Ready to Make the Eco-Friendly Shift?</h2>
+                <p style="color:rgba(255,255,255,0.75);font-size:15px;max-width:500px;margin:0 auto 32px;line-height:1.7;">
                     Partner with DonaMart for premium quality tableware. Customized packaging, custom sizes, and direct shipping for distributors worldwide.
                 </p>
                 <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center">
-                    <a href="/DonaMart/bulk-order.php" class="btn btn-accent px-5 py-3 rounded-pill font-weight-bold shadow-md">Get B2B Price List</a>
+                    <a href="/DonaMart/bulk-order.php" class="btn btn-light px-5 py-3 rounded-pill font-weight-bold" style="color:var(--accent-color,#b5835a);">Get B2B Price List</a>
                     <a href="/DonaMart/contact.php" class="btn btn-outline-light px-5 py-3 rounded-pill font-weight-bold">Talk to Sales Expert</a>
                 </div>
             </div>
