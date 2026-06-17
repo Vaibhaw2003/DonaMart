@@ -1,7 +1,6 @@
 <?php
 require_once 'config/db.php';
 
-// Get product slug
 $slug = filter_input(INPUT_GET, 'slug', FILTER_SANITIZE_SPECIAL_CHARS) ?? '';
 
 if (empty($slug)) {
@@ -25,13 +24,12 @@ if (!$product) {
     exit;
 }
 
-$page_title = $product['name'] . " - Eco Tableware Spec";
+$page_title  = $product['name'] . " - Eco Tableware Spec";
 $active_page = "products";
-$meta_desc = htmlspecialchars(substr($product['description'], 0, 150));
+$meta_desc   = htmlspecialchars(substr($product['description'], 0, 150));
 
 require_once 'includes/header.php';
 
-// Fetch related products
 try {
     $rel_stmt = $pdo->prepare("SELECT * FROM products WHERE category_id = ? AND id != ? AND status = 1 LIMIT 3");
     $rel_stmt->execute([$product['category_id'], $product['id']]);
@@ -48,10 +46,10 @@ try {
             <ol class="breadcrumb mb-2">
                 <li class="breadcrumb-item"><a href="/DonaMart/index.php" class="text-white-50 text-decoration-none">Home</a></li>
                 <li class="breadcrumb-item"><a href="/DonaMart/products.php" class="text-white-50 text-decoration-none">Products</a></li>
-                <li class="breadcrumb-item active text-white" aria-current="page"><?php echo htmlspecialchars($product['name']); ?></li>
+                <li class="breadcrumb-item active text-white" aria-current="page"><?= htmlspecialchars($product['name']) ?></li>
             </ol>
         </nav>
-        <h1 class="text-white font-weight-bold mb-0"><?php echo htmlspecialchars($product['name']); ?></h1>
+        <h1 class="text-white font-weight-bold mb-0"><?= htmlspecialchars($product['name']) ?></h1>
     </div>
 </section>
 
@@ -62,53 +60,50 @@ try {
             <!-- Product Image -->
             <div class="col-lg-6" data-aos="fade-right">
                 <div class="p-3 bg-white rounded-custom shadow-sm border border-light text-center">
-                    <img src="/DonaMart/uploads/<?php echo htmlspecialchars($product['image']); ?>" alt="<?php echo htmlspecialchars($product['name']); ?>" class="img-fluid rounded-4">
+                    <img src="/DonaMart/uploads/<?= htmlspecialchars($product['image']) ?>" alt="<?= htmlspecialchars($product['name']) ?>" class="img-fluid rounded-4">
                 </div>
             </div>
 
             <!-- Product Specs & CTAs -->
             <div class="col-lg-6" data-aos="fade-left">
                 <div class="product-info-panel">
-                    <span class="badge bg-success mb-3 px-3 py-2 text-uppercase font-weight-bold"><?php echo htmlspecialchars($product['category_name']); ?></span>
-                    <h2 class="font-weight-bold mb-3"><?php echo htmlspecialchars($product['name']); ?></h2>
-                    <p class="text-muted mb-4 lead"><?php echo htmlspecialchars($product['description']); ?></p>
-                    
+                    <span class="badge bg-success mb-3 px-3 py-2 text-uppercase font-weight-bold"><?= htmlspecialchars($product['category_name']) ?></span>
+                    <h2 class="font-weight-bold mb-3"><?= htmlspecialchars($product['name']) ?></h2>
+                    <p class="text-muted mb-4 lead"><?= htmlspecialchars($product['description']) ?></p>
+
                     <h4 class="h5 font-weight-bold text-primary-dark border-bottom pb-2 mb-3">Technical Specifications</h4>
-                    
+
                     <table class="table table-striped spec-table-large">
-                        <tr>
-                            <td class="font-weight-bold text-muted w-40">Available Sizes:</td>
-                            <td class="text-dark font-weight-bold"><?php echo htmlspecialchars($product['sizes']); ?></td>
-                        </tr>
-                        <tr>
-                            <td class="font-weight-bold text-muted">Raw Material:</td>
-                            <td class="text-dark font-weight-bold"><?php echo htmlspecialchars($product['material']); ?></td>
-                        </tr>
-                        <tr>
-                            <td class="font-weight-bold text-muted">Minimum Order Qty (MOQ):</td>
-                            <td class="text-dark font-weight-bold"><?php echo htmlspecialchars($product['moq']); ?> pieces</td>
-                        </tr>
-                        <tr>
-                            <td class="font-weight-bold text-muted">Biodegradability:</td>
-                            <td class="text-success font-weight-bold">100% Compostable (within 60-90 days)</td>
-                        </tr>
-                        <tr>
-                            <td class="font-weight-bold text-muted">Heat Resistance:</td>
-                            <td class="text-dark font-weight-bold">Safe up to 220°C (Microwave & Oven Safe)</td>
-                        </tr>
-                        <tr>
-                            <td class="font-weight-bold text-muted">Chemical Treatment:</td>
-                            <td class="text-dark font-weight-bold">Zero Chemicals, Dyes, or Lacquers Used</td>
-                        </tr>
+                        <tr><td class="font-weight-bold text-muted w-40">Available Sizes:</td><td class="text-dark font-weight-bold"><?= htmlspecialchars($product['sizes']) ?></td></tr>
+                        <tr><td class="font-weight-bold text-muted">Raw Material:</td><td class="text-dark font-weight-bold"><?= htmlspecialchars($product['material']) ?></td></tr>
+                        <tr><td class="font-weight-bold text-muted">Minimum Order Qty (MOQ):</td><td class="text-dark font-weight-bold"><?= number_format($product['moq']) ?> pieces</td></tr>
+                        <tr><td class="font-weight-bold text-muted">Biodegradability:</td><td class="text-success font-weight-bold">100% Compostable (within 60-90 days)</td></tr>
+                        <tr><td class="font-weight-bold text-muted">Heat Resistance:</td><td class="text-dark font-weight-bold">Safe up to 220°C (Microwave & Oven Safe)</td></tr>
+                        <tr><td class="font-weight-bold text-muted">Chemical Treatment:</td><td class="text-dark font-weight-bold">Zero Chemicals, Dyes, or Lacquers Used</td></tr>
                     </table>
 
                     <div class="d-flex flex-column flex-sm-row gap-3 mt-4">
-                        <a href="/DonaMart/bulk-order.php?product=<?php echo urlencode($product['name']); ?>" class="btn btn-accent btn-lg px-5 py-3 rounded-pill font-weight-bold shadow-md">Request Wholesale Quote</a>
-                        <a href="https://wa.me/919876543210?text=Hi%20DonaMart,%20I'm%20interested%20in%20the%20product:%20<?php echo urlencode($product['name']); ?>" target="_blank" class="btn btn-whatsapp btn-lg px-5 py-3 rounded-pill font-weight-bold"><i class="fa-brands fa-whatsapp me-2"></i> WhatsApp Order</a>
+                        <a href="/DonaMart/bulk-order.php?product=<?= urlencode($product['name']) ?>"
+                           class="btn btn-accent btn-lg px-5 py-3 rounded-pill font-weight-bold shadow-md">
+                            Request Wholesale Quote
+                        </a>
+                        <a href="https://wa.me/918874812003?text=Hi%20DonaMart,%20I'm%20interested%20in:%20<?= urlencode($product['name']) ?>"
+                           target="_blank" rel="noopener"
+                           class="btn btn-whatsapp btn-lg px-5 py-3 rounded-pill font-weight-bold">
+                            <i class="fa-brands fa-whatsapp me-2"></i> WhatsApp Order
+                        </a>
                     </div>
-                    
+
+                    <!-- PDF Download — JavaScript-driven, bypasses any overlay issue -->
                     <div class="mt-4 pt-3 border-top text-center text-sm-start">
-                        <a href="/DonaMart/actions/download_catalogue.php" class="text-accent text-decoration-none font-weight-bold hover-accent"><i class="fa-solid fa-file-pdf me-2 fs-5"></i> Download Product Catalogue PDF</a>
+                        <button type="button"
+                           onclick="window.location.href='/DonaMart/actions/download_catalogue.php'"
+                           style="background:var(--tan-light,#f0e6d9);color:var(--accent-color,#b5835a);
+                                  border:none;font-weight:700;padding:10px 18px;border-radius:50px;
+                                  cursor:pointer;font-size:14px;display:inline-flex;align-items:center;gap:8px;
+                                  font-family:inherit;">
+                            <i class="fa-solid fa-file-pdf"></i> Download Product Catalogue PDF
+                        </button>
                     </div>
                 </div>
             </div>
@@ -125,14 +120,14 @@ try {
                     <div class="col-lg-4 col-md-6 mb-4">
                         <div class="product-card">
                             <div class="product-img-wrapper">
-                                <img src="/DonaMart/uploads/<?php echo htmlspecialchars($rp['image']); ?>" alt="<?php echo htmlspecialchars($rp['name']); ?>">
+                                <img src="/DonaMart/uploads/<?= htmlspecialchars($rp['image']) ?>" alt="<?= htmlspecialchars($rp['name']) ?>">
                             </div>
                             <div class="product-details">
-                                <h4 class="h5 mb-2 font-weight-bold text-primary-dark"><?php echo htmlspecialchars($rp['name']); ?></h4>
-                                <p class="text-muted text-sm mb-3 flex-grow-1"><?php echo htmlspecialchars(substr($rp['description'], 0, 80)) . '...'; ?></p>
+                                <h4 class="h5 mb-2 font-weight-bold text-primary-dark"><?= htmlspecialchars($rp['name']) ?></h4>
+                                <p class="text-muted text-sm mb-3"><?= htmlspecialchars(substr($rp['description'], 0, 80)) ?>...</p>
                                 <div class="product-actions d-grid gap-2">
-                                    <a href="/DonaMart/product-details.php?slug=<?php echo urlencode($rp['slug']); ?>" class="btn btn-outline-primary-custom rounded-pill btn-sm font-weight-bold">View Specs</a>
-                                    <a href="/DonaMart/bulk-order.php?product=<?php echo urlencode($rp['name']); ?>" class="btn btn-accent rounded-pill btn-sm font-weight-bold">Get Price</a>
+                                    <a href="/DonaMart/product-details.php?slug=<?= urlencode($rp['slug']) ?>" class="btn btn-outline-primary-custom rounded-pill btn-sm font-weight-bold">View Specs</a>
+                                    <a href="/DonaMart/bulk-order.php?product=<?= urlencode($rp['name']) ?>" class="btn btn-accent rounded-pill btn-sm font-weight-bold">Get Price</a>
                                 </div>
                             </div>
                         </div>
