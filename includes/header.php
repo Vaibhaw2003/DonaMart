@@ -13,29 +13,67 @@ function isActive($page, $active_page) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo isset($page_title) ? $page_title . " - DonaMart" : "DonaMart - Premium Eco-Friendly Tableware Manufacturer"; ?></title>
-    
+
     <!-- Meta tags for SEO -->
     <meta name="description" content="<?php echo isset($meta_desc) ? $meta_desc : "DonaMart is a leading manufacturer of premium eco-friendly Dona, Pattal, Areca leaf plates, biodegradable bowls, and compartment plates."; ?>">
     <meta name="keywords" content="Eco-friendly plates, Dona manufacture, Pattal manufacturer, Areca leaf tableware, biodegradable bowls, DonaMart, disposable compartment plates">
     <meta name="author" content="DonaMart">
-    
-    <!-- Google Fonts - Outfit and Inter -->
+
+    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    
+
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    
+
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- AOS CSS (Animate on Scroll) -->
+
+    <!-- AOS CSS -->
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-    
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="/DonaMart/assets/css/style.css">
-    
+
+    <!-- Custom CSS (with cache-busting version) -->
+    <link rel="stylesheet" href="/DonaMart/assets/css/style.css?v=<?php echo time(); ?>">
+
+    <!-- ══════════════════════════════════════════════
+         INLINE EMERGENCY FIX — guaranteed to apply
+         (no cache issue, no specificity issue, loads last)
+    ══════════════════════════════════════════════ -->
+    <style>
+        * { box-sizing: border-box; }
+        html, body {
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+        .top-bar {
+            margin: 0 !important;
+            border: none !important;
+            box-shadow: none !important;
+        }
+        .navbar {
+            margin: 0 !important;
+            border: none !important;
+            box-shadow: none !important;
+        }
+        .hero-section {
+            min-height: auto !important;
+            height: auto !important;
+            padding: 130px 0 90px !important;
+            margin: 0 !important;
+            display: flex !important;
+            align-items: center !important;
+        }
+        @media (max-width: 767px) {
+            .hero-section {
+                padding: 100px 0 60px !important;
+            }
+        }
+        section {
+            margin: 0 !important;
+        }
+    </style>
+
 </head>
 <body>
 
