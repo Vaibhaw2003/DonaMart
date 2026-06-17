@@ -25,19 +25,27 @@ require_once 'includes/header.php';
                 <span class="text-accent text-uppercase font-weight-bold fs-6">Who We Are</span>
                 <h2 class="mt-2 mb-4">Pioneers in Biodegradable Tableware Manufacturing</h2>
                 <p class="text-muted mb-4">
-                    Founded in 2018, DonaMart started with a simple vision: to make biodegradable tableware as accessible and durable as traditional plastic dinnerware. Over the years, we have grown into one of the largest manufacturer-exporters of Areca leaf and Sal leaf products.
+                    DonaMart began as a small family-run unit in Varanasi, driven by a simple goal: replace plastic
+                    tableware with something the earth could actually absorb back. What started with a handful of
+                    workers hand-pressing Sal leaves has grown into a full-scale manufacturing operation supplying
+                    Areca leaf plates, Dona, Pattal, and compartment plates to caterers, distributors, and exporters
+                    across India and overseas.
                 </p>
                 <p class="text-muted mb-4">
-                    Our operations are driven by sustainability. We source raw fallen leaves from local farms, providing secondary income to farmers while maintaining a 100% natural, carbon-neutral production cycle.
+                    Every product we make starts with leaves that have already fallen — never cut from a living
+                    tree. We work directly with farming communities near Varanasi and Sal-leaf-growing belts,
+                    paying fair rates for raw material that would otherwise go to waste. The leaves are washed,
+                    sun-dried, and hydraulically pressed into shape without a single drop of dye, chemical, or
+                    plastic lining, so the finished plate composts naturally within 60–90 days.
                 </p>
-                
+
                 <div class="row g-4 mt-2">
                     <div class="col-sm-6">
                         <div class="d-flex align-items-start">
                             <i class="fa-solid fa-leaf text-success fs-3 me-3 mt-1"></i>
                             <div>
                                 <h5 class="font-weight-bold mb-1">Our Mission</h5>
-                                <p class="text-muted text-sm mb-0">To eliminate single-use plastics from events, restaurants, and catering services.</p>
+                                <p class="text-muted text-sm mb-0">Give businesses a tableware option that performs as well as plastic but leaves nothing behind.</p>
                             </div>
                         </div>
                     </div>
@@ -46,7 +54,7 @@ require_once 'includes/header.php';
                             <i class="fa-solid fa-eye text-success fs-3 me-3 mt-1"></i>
                             <div>
                                 <h5 class="font-weight-bold mb-1">Our Vision</h5>
-                                <p class="text-muted text-sm mb-0">To become the global standard for eco-friendly premium tableware exports.</p>
+                                <p class="text-muted text-sm mb-0">Make natural leaf tableware the default choice for caterers and exporters, not the alternative.</p>
                             </div>
                         </div>
                     </div>
