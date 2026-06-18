@@ -145,6 +145,7 @@ a.hover-accent:hover{ color: var(--accent-color) !important; }
 }
 .navbar.scrolled {
     background-color: var(--glass-bg);
+    -webkit-backdrop-filter: blur(10px);
     backdrop-filter: blur(10px);
     padding: 10px 0;
     box-shadow: var(--shadow-md);
